@@ -3,73 +3,911 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copy String</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f9;
-            margin: 0;
+    <title>VPKBIET College | Student Grievance & Teacher Feedback Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            200: '#bcccdc',
+                            700: '#1e3a8a',
+                            800: '#172554',
+                            900: '#0f172a',
+                            950: '#090d16',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
         }
-        .box {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        input {
-            padding: 10px;
-            width: 250px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 15px;
-            font-size: 16px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        #msg {
-            margin-top: 15px;
-            color: #28a745;
-            font-weight: bold;
-        }
-    </style>
+    </script>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-amber-200 selection:text-navy-900">
 
-    <div class="box">
-        <h2>String Copy Karein</h2>
-        <input type="text" id="myText" value="Hello, yeh string copy hogi!">
-        <button onclick="copyString()">Copy</button>
-        <p id="msg"></p>
+    <!-- Top Institutional Bar -->
+    <div class="bg-navy-950 text-slate-300 text-xs py-2 px-4 border-b border-navy-800">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 text-center sm:text-left">
+            <span>Vidya Pratishthan's Kamalnayan Bajaj Institute of Engineering & Technology, Baramati</span>
+            <span class="text-amber-400 font-medium flex items-center gap-1.5">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                Confidential & Secure Grievance Redressal Cell
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Institutional Header -->
+    <header class="bg-navy-900 text-white shadow-lg sticky top-0 z-30 border-b-4 border-amber-500">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <!-- College Crest & Title -->
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-navy-950 shadow-md shrink-0">
+                    <i data-lucide="graduation-cap" class="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-display font-extrabold text-xl sm:text-2xl tracking-tight text-white">VPKBIET College</h1>
+                        <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-navy-800 text-amber-400 rounded-full border border-amber-500/30">Baramati</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 font-medium">Student Grievance & Teacher Feedback Portal</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex bg-navy-950/70 p-1.5 rounded-xl border border-navy-700/60 w-full md:w-auto">
+                <button id="tab-submit" onclick="switchTab('submit')" class="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-amber-500 text-navy-950 shadow-sm">
+                    <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                    <span>Submit a Complaint</span>
+                </button>
+                <button id="tab-track" onclick="switchTab('track')" class="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-300 hover:text-white">
+                    <i data-lucide="search-check" class="w-4 h-4"></i>
+                    <span>Track / View Complaints</span>
+                    <span id="complaint-count-badge" class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-navy-800 text-amber-400 font-bold">3</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
+
+        <!-- SECTION 1: SUBMIT A COMPLAINT -->
+        <section id="section-submit" class="transition-all duration-300">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left Info Sidebar -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+                        <div class="w-10 h-10 rounded-lg bg-navy-50 text-navy-800 flex items-center justify-center mb-4">
+                            <i data-lucide="info" class="w-5 h-5"></i>
+                        </div>
+                        <h2 class="font-display font-bold text-lg text-navy-900 mb-2">Grievance Guidelines</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            This portal allows VPKBIET students to report academic concerns, faculty conduct issues, or lecture irregularities directly to the Grievance Redressal Committee & respective HODs.
+                        </p>
+                        <ul class="space-y-3 text-xs text-slate-600">
+                            <li class="flex items-start gap-2.5">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                                <span><strong>100% Anonymous Option:</strong> Toggle anonymous submission to hide your identity completely.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                                <span><strong>Unique Tracking ID:</strong> Save your generated ID (e.g., <code class="bg-slate-100 px-1 rounded text-navy-800">VPK-2026-XXXX</code>) to check resolution progress.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                                <span><strong>Fair Review:</strong> Please provide objective, constructive, and factual details for swift action.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-navy-900 to-navy-800 rounded-2xl p-6 text-white shadow-md border border-navy-700">
+                        <div class="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
+                            <i data-lucide="clock" class="w-4 h-4"></i>
+                            Response SLA
+                        </div>
+                        <h3 class="font-display font-bold text-base mb-1">48 - 72 Working Hours</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            High-priority complaints regarding conduct or evaluation are escalated immediately to the Principal and Departmental HOD.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Complaint Form -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                        <div class="bg-slate-50/80 px-6 py-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <h2 class="font-display font-bold text-xl text-navy-900">Lodge a Faculty / Academic Grievance</h2>
+                                <p class="text-xs text-slate-500 mt-0.5">All fields marked with <span class="text-rose-500 font-bold">*</span> are required</p>
+                            </div>
+
+                            <!-- Anonymous Toggle Switch -->
+                            <label class="inline-flex items-center cursor-pointer bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs hover:border-amber-400 transition-colors select-none">
+                                <input type="checkbox" id="anonymous-toggle" class="sr-only peer" onchange="toggleAnonymousMode()">
+                                <div class="relative w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-navy-800"></div>
+                                <span class="ms-2.5 text-xs font-semibold text-navy-900 flex items-center gap-1.5">
+                                    <i data-lucide="venetian-mask" class="w-4 h-4 text-amber-600"></i>
+                                    Submit Anonymously
+                                </span>
+                            </label>
+                        </div>
+
+                        <form id="complaint-form" onsubmit="handleComplaintSubmit(event)" class="p-6 space-y-6">
+                            
+                            <!-- Anonymous Notice Banner (Hidden by default) -->
+                            <div id="anonymous-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                                <i data-lucide="eye-off" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+                                <div class="text-xs text-amber-900">
+                                    <p class="font-bold">Anonymous Mode Enabled</p>
+                                    <p class="mt-0.5 text-amber-800">Your Name and PRN/Roll Number are hidden and will not be stored or visible to any faculty or administrator.</p>
+                                </div>
+                            </div>
+
+                            <!-- Student Identification Section -->
+                            <div id="student-identity-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 transition-all duration-200">
+                                <div>
+                                    <label for="student-name" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Student Full Name <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" id="student-name" required placeholder="e.g., Aarav Deshmukh"
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800 transition-all">
+                                </div>
+                                <div>
+                                    <label for="student-prn" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        PRN / Roll Number <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" id="student-prn" required placeholder="e.g., 72145892K or TE-COMP-42"
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800 transition-all">
+                                </div>
+                            </div>
+
+                            <!-- Academic Details -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="department" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Department <span class="text-rose-500">*</span>
+                                    </label>
+                                    <select id="department" required
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800 transition-all">
+                                        <option value="" disabled selected>Select Department</option>
+                                        <option value="Computer">Computer Engineering</option>
+                                        <option value="IT">Information Technology (IT)</option>
+                                        <option value="ENTC">Electronics & Telecommunication (ENTC)</option>
+                                        <option value="Mechanical">Mechanical Engineering</option>
+                                        <option value="Civil">Civil Engineering</option>
+                                        <option value="AI&DS">Artificial Intelligence & Data Science (AI&DS)</option>
+                                        <option value="First Year">First Year Engineering (FE General)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="academic-year" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Academic Year <span class="text-rose-500">*</span>
+                                    </label>
+                                    <select id="academic-year" required
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800 transition-all">
+                                        <option value="" disabled selected>Select Year</option>
+                                        <option value="FE">First Year (FE)</option>
+                                        <option value="SE">Second Year (SE)</option>
+                                        <option value="TE">Third Year (TE)</option>
+                                        <option value="BE">Final Year (BE)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="border-slate-100">
+
+                            <!-- Teacher & Subject Info -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="teacher-name" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Faculty / Teacher's Name <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" id="teacher-name" required placeholder="e.g., Prof. S. K. Kulkarni"
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800 transition-all">
+                                </div>
+                                <div>
+                                    <label for="subject-name" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Subject / Course Name <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" id="subject-name" required placeholder="e.g., Data Structures & Algorithms"
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800 transition-all">
+                                </div>
+                            </div>
+
+                            <!-- Category & Severity -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="category" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Complaint Category <span class="text-rose-500">*</span>
+                                    </label>
+                                    <select id="category" required
+                                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800 transition-all">
+                                        <option value="" disabled selected>Select Issue Category</option>
+                                        <option value="Teaching Methodology">Teaching Methodology</option>
+                                        <option value="Grading/Evaluation">Grading / Term-Work Evaluation</option>
+                                        <option value="Behavior/Conduct">Behavior / Unprofessional Conduct</option>
+                                        <option value="Attendance Issues">Attendance Discrepancy / Issues</option>
+                                        <option value="Irregular Lectures">Irregular Lectures / Syllabus Lag</option>
+                                        <option value="Other">Other Academic Concern</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Severity / Priority Level <span class="text-rose-500">*</span>
+                                    </label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="severity" value="Low" class="peer sr-only" checked>
+                                            <div class="text-center py-2 px-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 peer-checked:bg-sky-50 peer-checked:border-sky-500 peer-checked:text-sky-700 transition-all">
+                                                Low
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="severity" value="Medium" class="peer sr-only">
+                                            <div class="text-center py-2 px-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 peer-checked:bg-amber-50 peer-checked:border-amber-500 peer-checked:text-amber-700 transition-all">
+                                                Medium
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="severity" value="High" class="peer sr-only">
+                                            <div class="text-center py-2 px-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 peer-checked:bg-rose-50 peer-checked:border-rose-500 peer-checked:text-rose-700 transition-all">
+                                                High
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Detailed Description -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <label for="description" class="block text-xs font-semibold text-slate-700">
+                                        Detailed Description of Grievance <span class="text-rose-500">*</span>
+                                    </label>
+                                    <span id="char-count" class="text-[11px] text-slate-400">0 / 1000 chars</span>
+                                </div>
+                                <textarea id="description" rows="4" maxlength="1000" required oninput="updateCharCount()"
+                                    placeholder="Please describe the issue clearly including dates, lecture timings, or specific incidents..."
+                                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800 transition-all resize-y"></textarea>
+                            </div>
+
+                            <!-- Submit Action -->
+                            <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                                    <i data-lucide="lock" class="w-3.5 h-3.5 text-navy-700"></i>
+                                    Encrypted submission to VPKBIET Grievance Cell
+                                </p>
+                                <button type="submit"
+                                    class="w-full sm:w-auto px-6 py-3 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                    <span>Submit Grievance</span>
+                                    <i data-lucide="send" class="w-4 h-4 text-amber-400"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: TRACK / VIEW COMPLAINTS -->
+        <section id="section-track" class="hidden transition-all duration-300 space-y-6">
+            
+            <!-- Top Control & Search Bar -->
+            <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                    <div>
+                        <h2 class="font-display font-bold text-xl text-navy-900">Grievance Tracking & Redressal Log</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Search by Tracking ID or filter grievances across departments</p>
+                    </div>
+
+                    <!-- Admin / HOD Simulation Toggle -->
+                    <div class="flex items-center gap-3 self-start lg:self-auto">
+                        <label class="inline-flex items-center cursor-pointer bg-navy-50 px-3.5 py-2 rounded-xl border border-navy-200/80 hover:border-navy-400 transition-colors select-none">
+                            <input type="checkbox" id="admin-toggle" class="sr-only peer" onchange="toggleAdminMode()">
+                            <div class="relative w-10 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <span class="ms-2.5 text-xs font-bold text-navy-900 flex items-center gap-1.5">
+                                <i data-lucide="user-cog" class="w-4 h-4 text-navy-700"></i>
+                                Admin / HOD View
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Admin Mode Active Banner -->
+                <div id="admin-banner" class="hidden mt-4 bg-navy-900 text-white rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-amber-500 text-navy-950 font-extrabold uppercase text-[10px]">HOD / Admin Mode</span>
+                        <span>You can now update complaint statuses and post official resolution remarks below.</span>
+                    </div>
+                    <button onclick="resetDemoData()" class="text-amber-400 hover:text-amber-300 underline font-medium self-start sm:self-auto cursor-pointer">
+                        Reset Sample Data
+                    </button>
+                </div>
+
+                <!-- Search & Filter Controls -->
+                <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-2 relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="search-input" oninput="renderComplaints()"
+                            placeholder="Search by Tracking ID (e.g., VPK-2026-4821), Teacher name, or Subject..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800">
+                    </div>
+                    <div>
+                        <select id="status-filter" onchange="renderComplaints()"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-navy-800/20 focus:border-navy-800">
+                            <option value="ALL">All Statuses</option>
+                            <option value="Pending Review">Pending Review</option>
+                            <option value="Under Investigation">Under Investigation</option>
+                            <option value="Resolved">Resolved</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Summary Strip -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <p class="text-xs font-medium text-slate-500">Total Logged</p>
+                    <p id="stat-total" class="font-display font-extrabold text-2xl text-navy-900 mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <p class="text-xs font-medium text-amber-600">Pending Review</p>
+                    <p id="stat-pending" class="font-display font-extrabold text-2xl text-amber-600 mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <p class="text-xs font-medium text-blue-600">Under Investigation</p>
+                    <p id="stat-investigating" class="font-display font-extrabold text-2xl text-blue-600 mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <p class="text-xs font-medium text-emerald-600">Resolved</p>
+                    <p id="stat-resolved" class="font-display font-extrabold text-2xl text-emerald-600 mt-1">0</p>
+                </div>
+            </div>
+
+            <!-- Complaints List Container -->
+            <div id="complaints-list" class="space-y-4">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6 px-4">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-navy-900">VPKBIET Baramati</span>
+                <span>•</span>
+                <span>Student Grievance Redressal Portal</span>
+            </div>
+            <p>Vidyanagari, Bhigwan Road, Baramati, Dist. Pune - 413133, Maharashtra</p>
+        </div>
+    </footer>
+
+    <!-- Confirmation Modal (After Submission) -->
+    <div id="confirmation-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-navy-950/70 backdrop-blur-xs p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 transform transition-all">
+            <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+            </div>
+            <h3 class="font-display font-bold text-xl text-center text-navy-900">Grievance Registered!</h3>
+            <p class="text-xs text-slate-500 text-center mt-1">
+                Your complaint has been securely logged with the VPKBIET Grievance Redressal Committee.
+            </p>
+
+            <!-- Tracking ID Box -->
+            <div class="mt-5 bg-navy-50 border border-navy-200 rounded-xl p-4 text-center">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Your Unique Tracking ID</span>
+                <div class="flex items-center justify-center gap-2 mt-1">
+                    <span id="modal-tracking-id" class="font-mono font-extrabold text-xl text-navy-900 tracking-wide">VPK-2026-0000</span>
+                    <button onclick="copyTrackingId()" title="Copy Tracking ID" class="p-1.5 rounded-lg bg-white border border-slate-200 hover:bg-amber-50 hover:border-amber-300 text-navy-800 transition-colors cursor-pointer">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <span id="copy-feedback" class="text-[11px] text-emerald-600 font-semibold hidden mt-1 block">Copied to clipboard!</span>
+            </div>
+
+            <p class="text-xs text-slate-600 text-center mt-4 leading-relaxed">
+                Please save this Tracking ID to monitor status updates and official HOD remarks in the <strong>Track / View Complaints</strong> tab.
+            </p>
+
+            <div class="mt-6 flex flex-col sm:flex-row gap-2.5">
+                <button onclick="closeModalAndTrack()" class="flex-1 py-2.5 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold transition-colors cursor-pointer">
+                    Track This Complaint
+                </button>
+                <button onclick="closeModal()" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-navy-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-lg border border-navy-700 flex items-center gap-2">
+        <i data-lucide="check" class="w-4 h-4 text-amber-400"></i>
+        <span id="toast-message">Action completed</span>
     </div>
 
     <script>
-        function copyString() {
-            // Input field se text lena
-            let textBox = document.getElementById("myText");
-            
-            // Text select aur copy karna
-            textBox.select();
-            navigator.clipboard.writeText(textBox.value);
+        // Storage Key
+        const STORAGE_KEY = 'vpkbiet_grievances_v1';
 
-            // Confirmation message dikhana
-            document.getElementById("msg").innerText = "Copied: " + textBox.value;
+        // Realistic Pre-populated Sample Complaints for VPKBIET Baramati
+        const DEFAULT_COMPLAINTS = [
+            {
+                id: 'VPK-2026-4189',
+                isAnonymous: false,
+                studentName: 'Rohan Patil',
+                prn: '72241098M',
+                department: 'Computer',
+                year: 'TE',
+                teacherName: 'Prof. R. M. Deshpande',
+                subject: 'Database Management Systems (DBMS)',
+                category: 'Irregular Lectures',
+                severity: 'High',
+                description: 'Almost 40% of Unit 3 and Unit 4 lectures were cancelled over the past three weeks without prior notice or rescheduled extra sessions, making it difficult to prepare for the upcoming In-Sem exams.',
+                status: 'Under Investigation',
+                date: '2026-11-18',
+                hodRemark: 'HOD Computer Dept: Discussed with the concerned faculty. Extra remedial lectures have been scheduled from Thursday 4:00 PM to 5:00 PM.'
+            },
+            {
+                id: 'VPK-2026-3902',
+                isAnonymous: true,
+                studentName: 'Anonymous Student',
+                prn: 'Hidden',
+                department: 'AI&DS',
+                year: 'SE',
+                teacherName: 'Prof. A. V. Joshi',
+                subject: 'Data Structures & Algorithms',
+                category: 'Grading/Evaluation',
+                severity: 'Medium',
+                description: 'Term-work practical marks for Batch B2 were deducted despite timely submission on the ERP portal and complete journal verification during lab hours.',
+                status: 'Resolved',
+                date: '2026-11-12',
+                hodRemark: 'Lab submission logs were cross-verified with the ERP timestamp. Marks for Batch B2 have been duly rectified.'
+            },
+            {
+                id: 'VPK-2026-5014',
+                isAnonymous: false,
+                studentName: 'Sneha Kulkarni',
+                prn: '72350211F',
+                department: 'ENTC',
+                year: 'SE',
+                teacherName: 'Prof. M. S. Shinde',
+                subject: 'Signals & Systems',
+                category: 'Teaching Methodology',
+                severity: 'Low',
+                description: 'The pace of solving numerical derivations on the board is very fast, and reference notes/PPTs are not shared on Google Classroom after class.',
+                status: 'Pending Review',
+                date: '2026-11-22',
+                hodRemark: ''
+            }
+        ];
+
+        let complaints = [];
+        let isAdminMode = false;
+        let lastCreatedId = '';
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            loadComplaints();
+            lucide.createIcons();
+            renderComplaints();
+        });
+
+        // Load from localStorage or seed defaults
+        function loadComplaints() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    complaints = JSON.parse(saved);
+                } catch (e) {
+                    complaints = [...DEFAULT_COMPLAINTS];
+                }
+            } else {
+                complaints = [...DEFAULT_COMPLAINTS];
+                saveComplaints();
+            }
+        }
+
+        function saveComplaints() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(complaints));
+            updateBadgeCount();
+        }
+
+        function updateBadgeCount() {
+            const badge = document.getElementById('complaint-count-badge');
+            if (badge) badge.textContent = complaints.length;
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            const submitSec = document.getElementById('section-submit');
+            const trackSec = document.getElementById('section-track');
+            const submitBtn = document.getElementById('tab-submit');
+            const trackBtn = document.getElementById('tab-track');
+
+            if (tab === 'submit') {
+                submitSec.classList.remove('hidden');
+                trackSec.classList.add('hidden');
+                
+                submitBtn.className = 'flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-amber-500 text-navy-950 shadow-sm cursor-pointer';
+                trackBtn.className = 'flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-300 hover:text-white cursor-pointer';
+            } else {
+                submitSec.classList.add('hidden');
+                trackSec.classList.remove('hidden');
+
+                trackBtn.className = 'flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-amber-500 text-navy-950 shadow-sm cursor-pointer';
+                submitBtn.className = 'flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-300 hover:text-white cursor-pointer';
+                renderComplaints();
+            }
+            lucide.createIcons();
+        }
+
+        // Toggle Anonymous Mode
+        function toggleAnonymousMode() {
+            const isAnon = document.getElementById('anonymous-toggle').checked;
+            const identityFields = document.getElementById('student-identity-fields');
+            const anonBanner = document.getElementById('anonymous-banner');
+            const nameInput = document.getElementById('student-name');
+            const prnInput = document.getElementById('student-prn');
+
+            if (isAnon) {
+                identityFields.classList.add('hidden');
+                anonBanner.classList.remove('hidden');
+                nameInput.removeAttribute('required');
+                prnInput.removeAttribute('required');
+            } else {
+                identityFields.classList.remove('hidden');
+                anonBanner.classList.add('hidden');
+                nameInput.setAttribute('required', 'true');
+                prnInput.setAttribute('required', 'true');
+            }
+            lucide.createIcons();
+        }
+
+        // Character Counter
+        function updateCharCount() {
+            const desc = document.getElementById('description').value;
+            document.getElementById('char-count').textContent = `${desc.length} / 1000 chars`;
+        }
+
+        // Generate Unique Tracking ID (VPK-2026-XXXX)
+        function generateTrackingId() {
+            let id;
+            do {
+                const rand = Math.floor(1000 + Math.random() * 9000);
+                id = `VPK-2026-${rand}`;
+            } while (complaints.some(c => c.id === id));
+            return id;
+        }
+
+        // Handle Form Submission
+        function handleComplaintSubmit(e) {
+            e.preventDefault();
+
+            const isAnon = document.getElementById('anonymous-toggle').checked;
+            const studentName = isAnon ? 'Anonymous Student' : document.getElementById('student-name').value.trim();
+            const prn = isAnon ? 'Hidden' : document.getElementById('student-prn').value.trim();
+            const department = document.getElementById('department').value;
+            const year = document.getElementById('academic-year').value;
+            const teacherName = document.getElementById('teacher-name').value.trim();
+            const subject = document.getElementById('subject-name').value.trim();
+            const category = document.getElementById('category').value;
+            const severity = document.querySelector('input[name="severity"]:checked').value;
+            const description = document.getElementById('description').value.trim();
+
+            const trackingId = generateTrackingId();
+            const today = new Date().toISOString().split('T')[0];
+
+            const newComplaint = {
+                id: trackingId,
+                isAnonymous: isAnon,
+                studentName,
+                prn,
+                department,
+                year,
+                teacherName,
+                subject,
+                category,
+                severity,
+                description,
+                status: 'Pending Review',
+                date: today,
+                hodRemark: ''
+            };
+
+            complaints.unshift(newComplaint);
+            saveComplaints();
+            lastCreatedId = trackingId;
+
+            // Reset Form
+            document.getElementById('complaint-form').reset();
+            document.getElementById('anonymous-toggle').checked = false;
+            toggleAnonymousMode();
+            updateCharCount();
+
+            // Show Confirmation Modal
+            document.getElementById('modal-tracking-id').textContent = trackingId;
+            document.getElementById('copy-feedback').classList.add('hidden');
+            const modal = document.getElementById('confirmation-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        // Modal Controls
+        function closeModal() {
+            const modal = document.getElementById('confirmation-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function closeModalAndTrack() {
+            closeModal();
+            switchTab('track');
+            document.getElementById('search-input').value = lastCreatedId;
+            renderComplaints();
+        }
+
+        // Copy Tracking ID using execCommand fallback
+        function copyTrackingId() {
+            const idText = document.getElementById('modal-tracking-id').textContent;
+            const tempInput = document.createElement('input');
+            tempInput.value = idText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            document.getElementById('copy-feedback').classList.remove('hidden');
+        }
+
+        // Toggle Admin / HOD View
+        function toggleAdminMode() {
+            isAdminMode = document.getElementById('admin-toggle').checked;
+            const banner = document.getElementById('admin-banner');
+            if (isAdminMode) {
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+            renderComplaints();
+        }
+
+        // Update Complaint Status & Remark (Admin Mode)
+        function updateComplaintAdmin(id) {
+            const statusSelect = document.getElementById(`status-select-${id}`);
+            const remarkInput = document.getElementById(`remark-input-${id}`);
+
+            const index = complaints.findIndex(c => c.id === id);
+            if (index !== -1) {
+                complaints[index].status = statusSelect.value;
+                complaints[index].hodRemark = remarkInput.value.trim();
+                saveComplaints();
+                renderComplaints();
+                showToast(`Updated ${id} to "${statusSelect.value}"`);
+            }
+        }
+
+        // Reset Demo Data
+        function resetDemoData() {
+            complaints = [...DEFAULT_COMPLAINTS];
+            saveComplaints();
+            document.getElementById('search-input').value = '';
+            document.getElementById('status-filter').value = 'ALL';
+            renderComplaints();
+            showToast('Sample complaints restored');
+        }
+
+        // Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Badge Helper Functions
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'Pending Review':
+                    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>Pending Review
+                            </span>`;
+                case 'Under Investigation':
+                    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Under Investigation
+                            </span>`;
+                case 'Resolved':
+                    return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Resolved
+                            </span>`;
+                default:
+                    return status;
+            }
+        }
+
+        function getSeverityBadge(severity) {
+            switch (severity) {
+                case 'High':
+                    return `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">High Priority</span>`;
+                case 'Medium':
+                    return `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Medium Priority</span>`;
+                default:
+                    return `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">Low Priority</span>`;
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function (m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+            });
+        }
+
+        // Render Complaints List & Update Stats
+        function renderComplaints() {
+            const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+            const statusFilter = document.getElementById('status-filter').value;
+            const listContainer = document.getElementById('complaints-list');
+
+            // Update Stats
+            document.getElementById('stat-total').textContent = complaints.length;
+            document.getElementById('stat-pending').textContent = complaints.filter(c => c.status === 'Pending Review').length;
+            document.getElementById('stat-investigating').textContent = complaints.filter(c => c.status === 'Under Investigation').length;
+            document.getElementById('stat-resolved').textContent = complaints.filter(c => c.status === 'Resolved').length;
+            updateBadgeCount();
+
+            // Filter Complaints
+            const filtered = complaints.filter(c => {
+                const matchesStatus = statusFilter === 'ALL' || c.status === statusFilter;
+                const matchesQuery = !searchQuery ||
+                    c.id.toLowerCase().includes(searchQuery) ||
+                    c.teacherName.toLowerCase().includes(searchQuery) ||
+                    c.subject.toLowerCase().includes(searchQuery) ||
+                    c.department.toLowerCase().includes(searchQuery) ||
+                    c.category.toLowerCase().includes(searchQuery);
+                return matchesStatus && matchesQuery;
+            });
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="bg-white rounded-2xl p-10 text-center border border-slate-200/80">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="folder-search" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-base text-navy-900">No Matching Grievances Found</h3>
+                        <p class="text-xs text-slate-500 mt-1">Try clearing your search filter or verify the Tracking ID (e.g., VPK-2026-4189).</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            listContainer.innerHTML = filtered.map(c => `
+                <article class="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/90 hover:border-navy-200 transition-all">
+                    <!-- Card Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="font-mono font-bold text-xs px-2.5 py-1 rounded-lg bg-navy-900 text-amber-400 tracking-wide">
+                                ${escapeHtml(c.id)}
+                            </span>
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-navy-800">
+                                ${escapeHtml(c.department)} • ${escapeHtml(c.year)}
+                            </span>
+                            ${getSeverityBadge(c.severity)}
+                        </div>
+                        <div class="flex items-center justify-between sm:justify-end gap-3">
+                            <span class="text-xs text-slate-400 flex items-center gap-1">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                ${escapeHtml(c.date)}
+                            </span>
+                            ${getStatusBadge(c.status)}
+                        </div>
+                    </div>
+
+                    <!-- Faculty & Category Details -->
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100 text-xs">
+                        <div>
+                            <span class="text-slate-400 block text-[11px]">Faculty / Teacher</span>
+                            <span class="font-bold text-navy-900 text-sm">${escapeHtml(c.teacherName)}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[11px]">Subject / Course</span>
+                            <span class="font-semibold text-slate-800">${escapeHtml(c.subject)}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[11px]">Grievance Category</span>
+                            <span class="font-semibold text-navy-700">${escapeHtml(c.category)}</span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mt-4">
+                        <p class="text-sm text-slate-700 leading-relaxed">${escapeHtml(c.description)}</p>
+                    </div>
+
+                    <!-- Student Submitter Footer -->
+                    <div class="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                        <div class="flex items-center gap-1.5">
+                            ${c.isAnonymous
+                                ? `<i data-lucide="venetian-mask" class="w-4 h-4 text-amber-600"></i>
+                                   <span class="font-semibold text-slate-700">Submitted Anonymously</span>`
+                                : `<i data-lucide="user" class="w-4 h-4 text-navy-700"></i>
+                                   <span>Filed by <strong class="text-slate-700">${escapeHtml(c.studentName)}</strong> (${escapeHtml(c.prn)})</span>`
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Official HOD / Committee Remark Box (if exists) -->
+                    ${c.hodRemark ? `
+                        <div class="mt-4 bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5 flex items-start gap-2.5">
+                            <i data-lucide="message-square-check" class="w-4 h-4 text-emerald-700 shrink-0 mt-0.5"></i>
+                            <div class="text-xs">
+                                <span class="font-bold text-emerald-900 block">Official Committee / HOD Remark:</span>
+                                <p class="text-emerald-800 mt-0.5 leading-relaxed">${escapeHtml(c.hodRemark)}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Admin / HOD Action Panel (Visible only when Admin View is toggled ON) -->
+                    ${isAdminMode ? `
+                        <div class="mt-4 pt-4 border-t border-dashed border-amber-300 bg-amber-50/40 -mx-5 -mb-5 sm:-mx-6 sm:-mb-6 p-5 sm:p-6 rounded-b-2xl">
+                            <div class="flex items-center gap-1.5 text-xs font-bold text-navy-900 mb-3">
+                                <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600"></i>
+                                <span>HOD / Grievance Cell Action Controls</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Update Status</label>
+                                    <select id="status-select-${c.id}" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white font-semibold text-navy-900">
+                                        <option value="Pending Review" ${c.status === 'Pending Review' ? 'selected' : ''}>Pending Review</option>
+                                        <option value="Under Investigation" ${c.status === 'Under Investigation' ? 'selected' : ''}>Under Investigation</option>
+                                        <option value="Resolved" ${c.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Official Remark / Action Taken</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="remark-input-${c.id}" value="${escapeHtml(c.hodRemark)}"
+                                            placeholder="Enter resolution details or remarks for the student..."
+                                            class="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
+                                        <button onclick="updateComplaintAdmin('${c.id}')"
+                                            class="px-4 py-2 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold shrink-0 cursor-pointer transition-colors">
+                                            Save Update
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </article>
+            `).join('');
+
+            lucide.createIcons();
         }
     </script>
-
 </body>
 </html>
