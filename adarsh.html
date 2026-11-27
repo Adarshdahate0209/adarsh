@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy String</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            width: 250px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #msg {
+            margin-top: 15px;
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>String Copy Karein</h2>
+        <input type="text" id="myText" value="Hello, yeh string copy hogi!">
+        <button onclick="copyString()">Copy</button>
+        <p id="msg"></p>
+    </div>
+
+    <script>
+        function copyString() {
+            // Input field se text lena
+            let textBox = document.getElementById("myText");
+            
+            // Text select aur copy karna
+            textBox.select();
+            navigator.clipboard.writeText(textBox.value);
+
+            // Confirmation message dikhana
+            document.getElementById("msg").innerText = "Copied: " + textBox.value;
+        }
+    </script>
+
+</body>
+</html>
